@@ -10,11 +10,18 @@ import UIKit
 
 class TocdoListViewController: UITableViewController {
 
-    let itemArray = ["Sturovo", "Prague", "Vienna"]
+    var itemArray = ["Sturovo", "Prague", "Vienna"]
+    
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        
+        if let item = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = item
+        }
+        
     }
     
     //MARK - Tableview Datasource Methods
@@ -49,6 +56,30 @@ class TocdoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+       
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            // What will happen when the user tapps the Add Item button
+            self.itemArray.append(textField.text!)
+            
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            
+            self.tableView.reloadData()
+        }
+        
+        alert.addAction(action)
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            textField = alertTextField
+        }
+        
+        //func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil)
+        present(alert, animated: true, completion: nil)
+    }
+    
 }
 
